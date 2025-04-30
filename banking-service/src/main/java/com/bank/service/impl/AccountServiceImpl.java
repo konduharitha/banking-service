@@ -7,12 +7,7 @@ import com.bank.mapper.AccountMapper;
 import com.bank.model.ResponseStatus;
 import com.bank.repository.AccountRepository;
 import com.bank.service.AccountService;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-
-
-
-
 
 import javax.security.auth.login.AccountNotFoundException;
 import java.util.List;
@@ -62,9 +57,9 @@ public class AccountServiceImpl implements AccountService {
                 .findById(id)
                 .orElseThrow(() -> new AccountNotFoundException("Account doesn't exist"));
 
-        if(account.getBalance() < amount){
+        if (account.getBalance() < amount) {
             throw new InsufficientBalanceException("user does not have sufficient balance");
-        }else {
+        } else {
 
             double total = account.getBalance() - amount;
             account.setBalance(total);

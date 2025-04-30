@@ -5,17 +5,17 @@ import com.bank.entity.Account;
 
 public class AccountMapper {
 
-    public static Account mapToAccount(AccountDto accountDto){
+    public static Account mapToAccount(AccountDto accountDto) {
         Account account1 = new Account(
-            accountDto.getId(),
-            accountDto.getAccountHolderName(),
-            accountDto.getBalance()
+                accountDto.getId(),
+                accountDto.getAccountHolderName(),
+                accountDto.getBalance()
         );
 
         return account1;
     }
 
-    public static AccountDto mapToAccountDto(Account account){
+    public static AccountDto mapToAccountDto(Account account) {
         AccountDto accountDto = new AccountDto(
                 account.getId(),
                 account.getAccountHolderName(),

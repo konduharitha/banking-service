@@ -8,7 +8,7 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class InsufficientBalanceException extends RuntimeException{
+public class InsufficientBalanceException extends RuntimeException {
     private String message;
 
 }
