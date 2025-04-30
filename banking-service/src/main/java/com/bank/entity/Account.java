@@ -6,6 +6,9 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.ArrayList;
+import java.util.List;
+
 
 @Entity
 @Getter
@@ -25,5 +28,7 @@ public class Account {
 
     private Double balance;
 
-
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "account_id") // This adds a foreign key column in the transaction_logs table
+    private List<TransactionLog> transactionLogs = new ArrayList<>();
 }

@@ -2,11 +2,15 @@ package com.bank.controller;
 
 
 import com.bank.dto.AccountDto;
+import com.bank.entity.TransactionLog;
+import com.bank.model.BankCreditRequest;
+import com.bank.model.BankDebitRequest;
 import com.bank.model.ResponseStatus;
 import com.bank.service.AccountService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
 import javax.security.auth.login.AccountNotFoundException;
 import java.util.List;
 import java.util.Map;
@@ -65,6 +69,30 @@ public class AccountController {
         ResponseStatus responseStatus = accountService.deleteAccount(id);
         return ResponseEntity.ok()
                 .body(responseStatus);
+    }
+
+    @GetMapping("/transcation")
+    public ResponseEntity<List<TransactionLog>> getAllTransactions() {
+        List<TransactionLog> transactions = accountService.getAllTransactionLogs();
+        return ResponseEntity.ok(transactions);
+    }
+
+    @GetMapping("/user/{accountId}")
+    public ResponseEntity<List<TransactionLog>> getTransactionsByAccountId(@PathVariable Long accountId) throws AccountNotFoundException {
+        List<TransactionLog> transactionLogs = accountService.getTransactionLogsByAccountId(accountId);
+        return ResponseEntity.ok(transactionLogs);
+    }
+
+    @PostMapping("/debit")
+    public ResponseEntity<ResponseStatus> bankDebitTranscation(@RequestBody BankDebitRequest request) {
+        ResponseStatus responseStatus = accountService.saveDebitPurchase(request);
+        return ResponseEntity.ok(responseStatus);
+    }
+
+    @PostMapping("/credit")
+    public ResponseEntity<ResponseStatus> bankCreditTranscation(@RequestBody BankCreditRequest request) {
+        ResponseStatus response = accountService.saveCreditPurchase(request);
+        return ResponseEntity.ok(response);
     }
 
 }
