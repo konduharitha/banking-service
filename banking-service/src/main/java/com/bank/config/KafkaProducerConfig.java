@@ -40,6 +40,7 @@ public class KafkaProducerConfig {
         DefaultKafkaProducerFactory<String, Object> producerFactory = new DefaultKafkaProducerFactory<>(configProps);
 
         KafkaTemplate kafkaTemplate = new KafkaTemplate<>(producerFactory);
+        kafkaTemplate.setObservationEnabled(Boolean.TRUE);
         return kafkaTemplate;
     }
 
@@ -61,6 +62,7 @@ public class KafkaProducerConfig {
         DefaultKafkaProducerFactory<String, Object> producerFactory = new DefaultKafkaProducerFactory<>(configProps);
 
         KafkaTemplate kafkaTemplate = new KafkaTemplate<>(producerFactory);
+        kafkaTemplate.setObservationEnabled(Boolean.TRUE);
         return kafkaTemplate;
     }
 

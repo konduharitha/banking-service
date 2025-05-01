@@ -85,6 +85,7 @@ public class AccountServiceImpl implements AccountService {
 
         kafkaTemplate.send(record);
 
+        log.info("Successfully Publish {} ", saved.getId());
 //        if(amount>1000){
 //            throw  new RuntimeException("More than 1000$ not allowed.");
 //        }
