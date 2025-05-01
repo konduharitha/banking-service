@@ -37,10 +37,10 @@ public class KafkaConsumerListener {
         log.info("Consume Message = {}", record.offset());
         log.info("Consume Message = {}", record.timestamp());
         log.info("Consume Message = {}", record.topic());
-
-        if(true){
-            throw  new RuntimeException("Test Exception");
-        }
+//
+//        if(true){
+//            throw  new RuntimeException("Test Exception");
+//        }
 
 
         acknowledgment.acknowledge();
