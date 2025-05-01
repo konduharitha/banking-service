@@ -7,6 +7,7 @@ import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.springframework.kafka.annotation.DltHandler;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.kafka.annotation.RetryableTopic;
+import org.springframework.kafka.retrytopic.SameIntervalTopicReuseStrategy;
 import org.springframework.kafka.support.Acknowledgment;
 import org.springframework.retry.annotation.Backoff;
 import org.springframework.stereotype.Component;
@@ -16,11 +17,12 @@ import org.springframework.stereotype.Component;
 public class KafkaConsumerListener {
     // DLT - Dead Letter Topic - final end place
     @RetryableTopic(
-            attempts = "2",
+            attempts = "4", // 1 - main attempt, 3 - retry attempts
             backoff = @Backoff(delay = 10000),
             retryTopicSuffix = ".retry",
             dltTopicSuffix = ".dlt",
-            kafkaTemplate = "kafkaRetryDltTemplate"
+            kafkaTemplate = "kafkaRetryDltTemplate",
+            sameIntervalTopicReuseStrategy = SameIntervalTopicReuseStrategy.SINGLE_TOPIC
     )
     @KafkaListener(
             topics = "credit.event",
