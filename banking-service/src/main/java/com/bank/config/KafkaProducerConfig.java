@@ -43,5 +43,26 @@ public class KafkaProducerConfig {
         return kafkaTemplate;
     }
 
+    @Bean
+    public KafkaTemplate<String, Object> kafkaRetryDltTemplate() {
+        Map<String, Object> configProps = new HashMap<>();
+        configProps.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, "localhost:9092");
+        configProps.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
+        configProps.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, JsonSerializer.class);
+
+        configProps.put(ProducerConfig.ACKS_CONFIG, "all");
+
+        configProps.put(ProducerConfig.ENABLE_IDEMPOTENCE_CONFIG, true);
+        configProps.put(ProducerConfig.MAX_IN_FLIGHT_REQUESTS_PER_CONNECTION, 1);
+        configProps.put(ProducerConfig.COMPRESSION_TYPE_CONFIG, "zstd");
+
+        configProps.put(ProducerConfig.RETRIES_CONFIG, 3);
+
+        DefaultKafkaProducerFactory<String, Object> producerFactory = new DefaultKafkaProducerFactory<>(configProps);
+
+        KafkaTemplate kafkaTemplate = new KafkaTemplate<>(producerFactory);
+        return kafkaTemplate;
+    }
+
 
 }
