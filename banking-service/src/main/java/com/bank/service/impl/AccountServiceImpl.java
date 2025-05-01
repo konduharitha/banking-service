@@ -12,12 +12,17 @@ import com.bank.repository.AccountRepository;
 import com.bank.repository.TransactionLogRepository;
 import com.bank.service.AccountService;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.kafka.clients.producer.ProducerRecord;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.security.auth.login.AccountNotFoundException;
+import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @Service
@@ -28,9 +33,13 @@ public class AccountServiceImpl implements AccountService {
 
     private final TransactionLogRepository transactionLogRepository;
 
-    public AccountServiceImpl(AccountRepository accountRepository, TransactionLogRepository transactionLogRepository) {
+    private final KafkaTemplate<String, Object> kafkaTemplate;
+
+
+    public AccountServiceImpl(AccountRepository accountRepository, TransactionLogRepository transactionLogRepository, KafkaTemplate<String, Object> kafkaTemplate) {
         this.accountRepository = accountRepository;
         this.transactionLogRepository = transactionLogRepository;
+        this.kafkaTemplate = kafkaTemplate;
     }
 
     @Override
@@ -49,6 +58,8 @@ public class AccountServiceImpl implements AccountService {
         return AccountMapper.mapToAccountDto(account);
     }
 
+
+    @Transactional
     @Override
     public AccountDto deposit(Long id, Double amount) {
         Account account = accountRepository
@@ -60,7 +71,25 @@ public class AccountServiceImpl implements AccountService {
 
         Account saved = accountRepository.save(account);
 
-        return AccountMapper.mapToAccountDto(saved);
+        AccountDto accountDto = AccountMapper.mapToAccountDto(saved);
+
+        Map<String,Object> header = new HashMap<>();
+
+        ProducerRecord<String,Object> record = new ProducerRecord<>(
+                "credit.event",
+                accountDto.getId().toString(),
+                saved
+        );
+
+        record.headers().add("test","test".getBytes(StandardCharsets.UTF_8));
+
+        kafkaTemplate.send(record);
+
+//        if(amount>1000){
+//            throw  new RuntimeException("More than 1000$ not allowed.");
+//        }
+
+        return accountDto;
     }
 
     @Override
@@ -69,12 +98,16 @@ public class AccountServiceImpl implements AccountService {
                 .findById(id)
                 .orElseThrow(() -> new AccountNotFoundException("Account doesn't exist"));
 
-        if (account.getBalance() < amount) {
+        if(account.getBalance() < amount){
             throw new InsufficientBalanceException("user does not have sufficient balance");
-        } else {
+        }else {
 
             double total = account.getBalance() - amount;
             account.setBalance(total);
+            TransactionLog transactionLog = new TransactionLog();
+            transactionLog.setTransactionDate(LocalDateTime.now());
+            transactionLog.setDescription("user debit amount: " + amount + ", " + "current amount : " +total);
+            account.getTransactionLogs().add(transactionLog);
             Account saved = accountRepository.save(account);
             return AccountMapper.mapToAccountDto(saved);
         }
