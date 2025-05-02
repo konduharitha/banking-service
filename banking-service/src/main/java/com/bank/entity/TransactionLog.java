@@ -2,7 +2,11 @@ package com.bank.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.springframework.data.annotation.CreatedBy;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
+import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
@@ -12,6 +16,7 @@ import java.util.UUID;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
+@EntityListeners(AuditingEntityListener.class)
 @Table(name = "transaction_logs")
 public class TransactionLog {
 
@@ -32,4 +37,11 @@ public class TransactionLog {
     @Column(nullable = true)
     private Double creditAmount;
 
+    @CreatedDate
+    @Column(name = "created_at")
+    private Instant createdAt;
+
+    @CreatedBy
+    @Column(name = "created_by")
+    private String createdBy;
 }
