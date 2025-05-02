@@ -163,7 +163,7 @@ public class AccountServiceImpl implements AccountService {
         //3. deduct the money and save the user amount.
         //4. save the new statement in statement table.
         //5. return the response.
-
+        // @Transactional - it's a declarative transaction
 
         Optional<Account> userDetails = accountRepository.findById(request.getUserId());
 

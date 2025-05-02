@@ -8,14 +8,11 @@ import java.util.ArrayList;
 public class AccountMapper {
 
     public static Account mapToAccount(AccountDto accountDto) {
-        Account account1 = new Account(
-                accountDto.getId(),
-                accountDto.getAccountHolderName(),
-                accountDto.getBalance(),
-                new ArrayList<>()
-        );
-
-        return account1;
+        return Account.builder()
+                .id(accountDto.getId())
+                .accountHolderName(accountDto.getAccountHolderName())
+                .balance(accountDto.getBalance())
+                .build();
     }
 
     public static AccountDto mapToAccountDto(Account account) {

@@ -1,10 +1,7 @@
 package com.bank.entity;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -13,9 +10,9 @@ import java.util.List;
 @Entity
 @Getter
 @Setter
+@Builder
 @AllArgsConstructor
 @NoArgsConstructor
-
 @Table(name = "accounts")
 public class Account {
 
@@ -27,6 +24,9 @@ public class Account {
     private String accountHolderName;
 
     private Double balance;
+
+    @Version
+    private Long version;
 
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "account_id") // This adds a foreign key column in the transaction_logs table
